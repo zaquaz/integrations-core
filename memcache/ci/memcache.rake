@@ -17,7 +17,7 @@ namespace :ci do
       install_requirements('memcache/requirements.txt',
                            "--cache-dir #{ENV['PIP_CACHE']}",
                            "#{ENV['VOLATILE_DIR']}/ci.log", use_venv)
-      sh %(docker create -p XXX:YYY --name memcache source/memcache:memcache_version)
+      sh %(bash memcache/ci/start-docker.sh)
     end
 
     task before_script: ['ci:common:before_script']
@@ -33,10 +33,9 @@ namespace :ci do
 
     task cleanup: ['ci:common:cleanup']
     # sample cleanup task
-    # task cleanup: ['ci:common:cleanup'] do
-    #   sh %(docker stop memcache)
-    #   sh %(docker rm memcache)
-    # end
+    task cleanup: ['ci:common:cleanup'] do
+      sh %(bash memcache/ci/stop-docker.sh)
+    end
 
     task :execute do
       exception = nil

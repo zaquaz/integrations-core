@@ -102,7 +102,7 @@ SLABS_AGGREGATES = [
 
 SERVICE_CHECK = 'memcache.can_connect'
 
-PORT = 11211
+PORT = 11212
 
 
 @attr(requires='memcache')

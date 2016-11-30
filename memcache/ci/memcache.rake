@@ -18,7 +18,7 @@ namespace :ci do
                            "--cache-dir #{ENV['PIP_CACHE']}",
                            "#{ENV['VOLATILE_DIR']}/ci.log", use_venv)
       sh %(bash memcache/ci/start-docker.sh)
-      Wait.for 'http://localhost:11212'
+      # Wait.for 'http://localhost:11212'
     end
 
     task before_script: ['ci:common:before_script']

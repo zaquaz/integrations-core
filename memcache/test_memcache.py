@@ -129,9 +129,9 @@ class TestMemCache(AgentCheckTest):
         self.assertRaises(Exception, self.run_check, config)
 
         tag_set = [
-            ["url:localhost:11211"],
-            ["url:localhost:11211", "instance:mytag"],
-            ["url:localhost:11211", "foo"]
+            ["url:localhost:11212"],
+            ["url:localhost:11212", "instance:mytag"],
+            ["url:localhost:11212", "foo"]
         ]
 
         for tags in tag_set:
@@ -186,14 +186,14 @@ class TestMemCache(AgentCheckTest):
 
     def testConnectionLeaks(self):
         for i in range(3):
-            # Count open connections to localhost:11211, should be 0
-            self.assertEquals(self._countConnections(11211), 0)
+            # Count open connections to localhost:11212, should be 0
+            self.assertEquals(self._countConnections(11212), 0)
             new_conf = {'init_config': {}, 'instances': [
                 {'url': "localhost"}]
             }
             self.run_check(new_conf)
             # Verify that the count is still 0
-            self.assertEquals(self._countConnections(11211), 0)
+            self.assertEquals(self._countConnections(11212), 0)
 
     def testOptionalItemsStats(self):
         config = {
@@ -203,7 +203,7 @@ class TestMemCache(AgentCheckTest):
             ]
         }
 
-        tags = ["url:localhost:11211", "instance:mytag"]
+        tags = ["url:localhost:11212", "instance:mytag"]
 
         self.run_check_twice(config, force_reload=True)
         for m in GAUGES:
@@ -218,7 +218,7 @@ class TestMemCache(AgentCheckTest):
             self.assertMetric(
                 "memcache.items.{0}_rate".format(m), tags=tags+["slab:1"], count=1)
 
-        self.assertServiceCheck(SERVICE_CHECK, status=AgentCheck.OK, tags=['host:localhost', 'port:11211'], count=1)
+        self.assertServiceCheck(SERVICE_CHECK, status=AgentCheck.OK, tags=['host:localhost', 'port:11212'], count=1)
 
         self.coverage_report()
 
@@ -230,7 +230,7 @@ class TestMemCache(AgentCheckTest):
             ]
         }
 
-        tags = ["url:localhost:11211", "instance:mytag"]
+        tags = ["url:localhost:11212", "instance:mytag"]
 
         self.run_check_twice(config, force_reload=True)
         for m in GAUGES:
@@ -247,7 +247,7 @@ class TestMemCache(AgentCheckTest):
             self.assertMetric(
                 "memcache.slabs.{0}_rate".format(m), tags=tags+["slab:1"], count=1)
 
-        self.assertServiceCheck(SERVICE_CHECK, status=AgentCheck.OK, tags=['host:localhost', 'port:11211'], count=1)
+        self.assertServiceCheck(SERVICE_CHECK, status=AgentCheck.OK, tags=['host:localhost', 'port:11212'], count=1)
 
         self.coverage_report()
 

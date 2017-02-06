@@ -3,6 +3,8 @@ redis.aof.buffer_length,gauge,,byte,,Size of the AOF buffer.,0,redis,aof buf len
 redis.aof.last_rewrite_time,gauge,,second,,Duration of the last AOF rewrite.,0,redis,last aof rewrite time
 redis.aof.rewrite,gauge,,,,Flag indicating a AOF rewrite operation is on-going.,0,redis,aof rewrite
 redis.aof.size,gauge,,byte,,AOF current file size (aof_current_size).,0,redis,aof size
+redis.bytes_received_per_sec,,byte,second,Bytes received per second.,0,redis,bytes rcv sec
+redis.bytes_sent_per_sec,gauge,,byte,second,Bytes sent per second.,0,redis,bytes snt sec
 redis.clients.biggest_input_buf,gauge,,,,The biggest input buffer among current client connections.,0,redis,biggest input buf
 redis.clients.blocked,gauge,,connection,,The number of connections waiting on a blocking call.,0,redis,clients blocked
 redis.clients.longest_output_list,gauge,,,,The longest output list among current client connections.,0,redis,long output list

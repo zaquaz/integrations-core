@@ -571,7 +571,9 @@ class MySql(AgentCheck):
                     else:
                         slave_running_status = AgentCheck.CRITICAL
 
-            # deprecated in favor of service_check("mysql.replication.slave_running")
+            # Debug
+	    self.log.debug(u"Result: %s", results)
+	    # deprecated in favor of service_check("mysql.replication.slave_running")
             self.gauge(self.SLAVE_SERVICE_CHECK_NAME, (1 if slave_running_status == AgentCheck.OK else 0), tags=tags)
             self.service_check(self.SLAVE_SERVICE_CHECK_NAME, slave_running_status, tags=self.service_check_tags)
 

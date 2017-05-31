@@ -16,14 +16,11 @@ from config import _is_affirmative
 from utils.dockerutil import (DockerUtil,
                               MountException,
                               BogusPIDException,
-                              SWARM_SVC_LABEL,
-                              RANCHER_CONTAINER_NAME,
-                              RANCHER_SVC_NAME,
-                              RANCHER_STACK_NAME)
+                              SWARM_SVC_LABEL)
 from utils.kubernetes import KubeUtil
 from utils.platform import Platform
 from utils.service_discovery.sd_backend import get_sd_backend
-from utils.orchestrator import NomadUtil, ECSUtil
+from utils.orchestrator import NomadUtil, ECSUtil, RancherUtil
 
 
 EVENT_TYPE = 'docker'
@@ -418,12 +415,12 @@ class DockerDaemon(AgentCheck):
 
         # Collect container names as tags on rancher
         if Platform.is_rancher():
-            if RANCHER_CONTAINER_NAME not in self.collect_labels_as_tags:
-                self.collect_labels_as_tags.append(RANCHER_CONTAINER_NAME)
-            if RANCHER_SVC_NAME not in self.collect_labels_as_tags:
-                self.collect_labels_as_tags.append(RANCHER_SVC_NAME)
-            if RANCHER_STACK_NAME not in self.collect_labels_as_tags:
-                self.collect_labels_as_tags.append(RANCHER_STACK_NAME)
+            if RancherUtil.CONTAINER_NAME_LABEL not in self.collect_labels_as_tags:
+                self.collect_labels_as_tags.append(RancherUtil.CONTAINER_NAME_LABEL)
+            if RancherUtil.SERVICE_NAME_LABEL not in self.collect_labels_as_tags:
+                self.collect_labels_as_tags.append(RancherUtil.SERVICE_NAME_LABEL)
+            if RancherUtil.STACK_NAME_LABEL not in self.collect_labels_as_tags:
+                self.collect_labels_as_tags.append(RancherUtil.STACK_NAME_LABEL)
 
         if entity is not None:
             pod_name = None
@@ -452,13 +449,13 @@ class DockerDaemon(AgentCheck):
                         elif k == SWARM_SVC_LABEL and Platform.is_swarm():
                             if v:
                                 tags.append("swarm_service:%s" % v)
-                        elif k == RANCHER_CONTAINER_NAME and Platform.is_rancher():
+                        elif k == RancherUtil.CONTAINER_NAME_LABEL and Platform.is_rancher():
                             if v:
                                 tags.append('rancher_container:%s' % v)
-                        elif k == RANCHER_SVC_NAME and Platform.is_rancher():
+                        elif k == RancherUtil.SERVICE_NAME_LABEL and Platform.is_rancher():
                             if v:
                                 tags.append('rancher_service:%s' % v)
-                        elif k == RANCHER_STACK_NAME and Platform.is_rancher():
+                        elif k == RancherUtil.STACK_NAME_LABEL and Platform.is_rancher():
                             if v:
                                 tags.append('rancher_stack:%s' % v)
 

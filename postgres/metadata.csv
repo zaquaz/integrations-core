@@ -48,3 +48,5 @@ postgresql.toast_blocks_read,gauge,,block,second,The number of disk blocks read 
 postgresql.toast_blocks_hit,gauge,,hit,second,The number of buffer hits in this table's TOAST table.,0,postgres,toast blks hit
 postgresql.toast_index_blocks_read,gauge,,block,second,The number of disk blocks read from this table's TOAST table index.,0,postgres,toast idx blks read
 postgresql.toast_index_blocks_hit,gauge,,block,second,The number of buffer hits in this table's TOAST table index.,0,postgres,toast idx blks hit
+postgresq.foo.bar,gauge,,block,second,Test metric metadata,0,postgres,toast idx blks hit
+

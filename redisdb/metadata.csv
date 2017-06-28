@@ -51,3 +51,4 @@ redis.stats.keyspace_hits,gauge,,key,,The total number of successful lookups in 
 redis.stats.keyspace_misses,gauge,,key,,The total number of missed lookups in the db.,0,redis,keyspace misses
 redis.command.calls,gauge,,,,"The number of times a redis command has been called, tagged by 'command', e.g. 'command:append'. Enable in Agent's redisdb.yaml with the command_stats option.",0,redis,cmd calls
 redis.command.usec_per_call,gauge,,,,"The CPU time consumed per redis command call, tagged by 'command', e.g. 'command:append'. Enable in Agent's redisdb.yaml with the command_stats option.",0,redis,usec per cmd
+redis.foo.bar,gauge,,,,The number of foo.,0,redis,pubsub patterns

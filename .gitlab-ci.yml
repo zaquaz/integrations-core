@@ -1,6 +1,17 @@
-image: python:latest
+image: docker:latest
 
-test:
+# When using dind, it's wise to use the overlayfs driver for
+# improved performance.
+variables:
+  DOCKER_DRIVER: overlay2
+
+services:
+- docker:dind
+
+before_script:
+- docker info
+
+build:
+  stage: build
   script:
-  - pip install tox flake8 invoke
-  - inv test --changed-only
+  - docker run --rm -e WHEELS_DEST='/shared/repository/targets/wheels' -e CORE_GIT_BRANCH='master'-v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-builder:latest

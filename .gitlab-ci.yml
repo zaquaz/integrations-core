@@ -16,6 +16,7 @@ build:
     - wheels
   stage: build
   script:
+    - apk --no-cache add python2
     - pip install azure-cli
     - docker login -u=$QUAY_ROBOT_USERNAME -p=$QUAY_ROBOT_PASSWD quay.io
     - docker run --rm -e WHEELS_DEST='/shared/repository/targets/wheels' -e CORE_GIT_BRANCH=$CI_COMMIT_REF_NAME -v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-builder:latest

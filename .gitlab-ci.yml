@@ -14,4 +14,4 @@ before_script:
 build:
   stage: build
   script:
-  - docker run --rm -e WHEELS_DEST='/shared/repository/targets/wheels' -e CORE_GIT_BRANCH='master'-v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-builder:latest
+  - docker run --rm -e WHEELS_DEST='/shared/repository/targets/wheels' -e CORE_GIT_BRANCH='master' -v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-builder:latest

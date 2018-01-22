@@ -4,6 +4,8 @@ image: docker:latest
 # improved performance.
 variables:
   DOCKER_DRIVER: overlay2
+  AZ_BLOB_CONTAINER: repository
+  CORE_GIT_BRANCH: jaime/gitlab
 
 services:
   - docker:dind
@@ -19,5 +21,13 @@ build:
     - apk --no-cache add py-pip
     - pip install azure-cli
     - docker login -u=$QUAY_ROBOT_USERNAME -p=$QUAY_ROBOT_PASSWD quay.io
+    - mkdir -p $PWD/shared
     - docker run --rm -e WHEELS_DEST='/shared/repository/targets/wheels' -e CORE_GIT_BRANCH=$CI_COMMIT_REF_NAME -v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-builder:latest
+    - az login --service-principal --username $AZ_APP_ID --tenant $AZ_TENANT_ID --password $AZ_APP_SECRET
+    - az storage blob download-batch --account-name $AZ_BLOB_ACCOUNT --source $AZ_BLOB_CONTAINER --destination $PWD/shared --pattern 'metadata.staged/*'
+    - az storage blob download-batch --account-name $AZ_BLOB_ACCOUNT --source $AZ_BLOB_CONTAINER --destination $PWD/shared --pattern 'targets/*'
+    - docker run --rm -e WHEELS_SIGNER_KEY_PASSWORD=$WHEELS_SIGNE -v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-signer:latest
+    - az storage blob upload-batch --account-name $AZ_BLOB_ACCOUNT --destination $AZ_BLOB_CONTAINER --source $PWD/shared --pattern 'targets/*'
+    - az storage blob upload-batch --account-name $AZ_BLOB_ACCOUNT --destination $AZ_BLOB_CONTAINER --source $PWD/shared --pattern 'metadata.staged/*'
+    - az logout
     - docker logout quay.io

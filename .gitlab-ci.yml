@@ -3,31 +3,93 @@ image: docker:latest
 # When using dind, it's wise to use the overlayfs driver for
 # improved performance.
 variables:
+  DOCKER_CONTENT_TRUST: 1
   DOCKER_DRIVER: overlay2
-  AZ_BLOB_CONTAINER: repository
-  CORE_GIT_BRANCH: jaime/gitlab
+  # The integration we will install to test pip+TUF.
+  TEST_WHEEL: datadog-checks-base
 
 services:
   - docker:dind
 
 before_script:
-  - docker info
+  # Install some libraries needed to build the Azure CLI.
+  - apk --update --no-cache add bash build-base git jq libffi-dev openssl-dev python-dev py-pip
+  # Download, build, and install the Azure CLI.
+  - pip install azure-cli
+  # Login to Azure.
+  - az login --service-principal --username $AZ_APP_ID --tenant $AZ_TENANT_ID --password $AZ_APP_SECRET
+  # Reinstall pip with a custom version that supports TUF.
+  - pip install --force-reinstall --upgrade $PIP_TUF_URL
+  # Make a directory to store metadata.
+  - mkdir -p $PWD/shared/repository/metadata.staged
+  # Make a directory to store wheels.
+  - mkdir -p $PWD/shared/repository/targets/simple
+  # Make directories for pip+TUF.
+  - mkdir -p $PWD/tuf/repositories/datadog-integrations-core/metadata/current
+  - mkdir -p $PWD/tuf/repositories/datadog-integrations-core/metadata/previous
+  - mkdir -p $PWD/tuf/repositories/datadog-integrations-core/targets
+  # Bootstrap TUF config and metadata files for pip+TUF.
+  # NOTE: GitLab silently expands what looks like environment variables in
+  # secret variables, so make sure you escape a $ with $$!
+  # https://gitlab.com/gitlab-org/gitlab-ce/issues/31243
+  - echo $TUF_CONFIG_JSON >> $PWD/tuf/tuf-config.json
+  - export TUF_CONFIG_FILE=$PWD/tuf/tuf-config.json
+  - echo $ROOT_METADATA_JSON > $PWD/tuf/repositories/datadog-integrations-core/metadata/current/root.json
+  # Nuke old DCT metadata from orbit.
+  - rm -rf /root/.docker/
+  # "Pin" root DCT metadata for the wheels-builder.
+  - mkdir -p $WHEELS_BUILDER_METADATA_DIR
+  - echo $WHEELS_BUILDER_ROOT_JSON >> $WHEELS_BUILDER_METADATA_DIR/root.json
+  # "Pin" root DCT metadata for the wheels-signer.
+  - mkdir -p $WHEELS_SIGNER_METADATA_DIR
+  - echo $WHEELS_SIGNER_ROOT_JSON >> $WHEELS_SIGNER_METADATA_DIR/root.json
+  # Login for Docker.
+  - echo $IMAGE_REGISTRY_PASSWD | docker login --username $IMAGE_REGISTRY_USERNAME --password-stdin $IMAGE_REGISTRY
 
 build:
   tags:
     - wheels
   stage: build
   script:
-    - apk --no-cache add py-pip
-    - pip install azure-cli
-    - docker login -u=$QUAY_ROBOT_USERNAME -p=$QUAY_ROBOT_PASSWD quay.io
-    - mkdir -p $PWD/shared
-    - docker run --rm -e WHEELS_DEST='/shared/repository/targets/wheels' -e CORE_GIT_BRANCH=$CI_COMMIT_REF_NAME -v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-builder:latest
-    - az login --service-principal --username $AZ_APP_ID --tenant $AZ_TENANT_ID --password $AZ_APP_SECRET
-    - az storage blob download-batch --account-name $AZ_BLOB_ACCOUNT --source $AZ_BLOB_CONTAINER --destination $PWD/shared --pattern 'metadata.staged/*'
-    - az storage blob download-batch --account-name $AZ_BLOB_ACCOUNT --source $AZ_BLOB_CONTAINER --destination $PWD/shared --pattern 'targets/*'
-    - docker run --rm -e WHEELS_SIGNER_KEY_PASSWORD=$WHEELS_SIGNE -v $PWD/shared:/shared  quay.io/datadog/integrations-core-wheels-signer:latest
-    - az storage blob upload-batch --account-name $AZ_BLOB_ACCOUNT --destination $AZ_BLOB_CONTAINER --source $PWD/shared --pattern 'targets/*'
-    - az storage blob upload-batch --account-name $AZ_BLOB_ACCOUNT --destination $AZ_BLOB_CONTAINER --source $PWD/shared --pattern 'metadata.staged/*'
-    - az logout
-    - docker logout quay.io
+    # Build the wheels.
+    - docker -D run --rm -v $PWD:/shared/integrations-core -v $PWD/shared/repository/targets/simple:/shared/repository/targets/simple $WHEELS_BUILDER_IMAGE
+    # Temporary workaround to double-check the DCT metadata. A bit late now, but better late than never.
+    - jq '.signed.delegations.keys."'"$WHEELS_BUILDER_TARGETS_KEYID"'".keyval.public == "'"$WHEELS_BUILDER_TARGETS_PUBKEY"'"' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '(.signed.delegations.keys | length) == 1' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '(.signed.delegations.roles | length) == 1' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].keyids == ["'"$WHEELS_BUILDER_TARGETS_KEYID"'"]' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].name == "targets/releases"' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].paths == [""]' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].threshold == 1' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    - jq '(.signed.targets | length) == 0' $WHEELS_BUILDER_METADATA_DIR/targets.json
+    # Download previous TUF metadata.
+    - az storage blob download-batch --account-name $AZ_BLOB_ACCOUNT --source $AZ_BLOB_CONTAINER --destination $PWD/shared/repository --pattern 'metadata.staged/*'
+    - docker -D run --rm -e WHEELS_SIGNER_KEY_PASSWORD -e WHEELS_SIGNER_KEY -v $PWD/shared/repository/metadata.staged:/shared/repository/metadata.staged -v $PWD/shared/repository/targets/simple:/shared/repository/targets/simple $WHEELS_SIGNER_IMAGE
+    # Temporary workaround to double-check the DCT metadata. A bit late now, but better late than never.
+    - jq '.signed.delegations.keys."'"$WHEELS_SIGNER_TARGETS_KEYID"'".keyval.public == "'"$WHEELS_SIGNER_TARGETS_PUBKEY"'"' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '(.signed.delegations.keys | length) == 1' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '(.signed.delegations.roles | length) == 1' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].keyids == ["'"$WHEELS_SIGNER_TARGETS_KEYID"'"]' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].name == "targets/releases"' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].paths == [""]' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '.signed.delegations.roles[0].threshold == 1' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    - jq '(.signed.targets | length) == 0' $WHEELS_SIGNER_METADATA_DIR/targets.json
+    # Run local HTTP server to serve metadata and wheels.
+    - (cd $PWD/shared/repository; python -m SimpleHTTPServer 8000 &)
+    # Test whether pip+TUF works on downloading a wheel.
+    - pip -vvv download $TEST_WHEEL --index-url http://localhost:8000/targets/simple/ --only-binary ":all:"
+    # Test whether pip+TUF actually worked.
+    - test -f $PWD/tuf/repositories/datadog-integrations-core/targets/simple/$TEST_WHEEL/index.html
+    - test -f $PWD/tuf/repositories/datadog-integrations-core/targets/simple/$TEST_WHEEL/*.whl
+    # Upload new signed metadata to the cloud.
+    - az storage blob upload-batch --account-name $AZ_BLOB_ACCOUNT --destination $AZ_BLOB_CONTAINER --source $PWD/shared/repository --pattern 'metadata.staged/*'
+    # Delete old wheels from the cloud.
+    - az storage blob delete-batch --account-name $AZ_BLOB_ACCOUNT --source $AZ_BLOB_CONTAINER --pattern 'targets/simple/*'
+    # Upload new wheels to the cloud.
+    - az storage blob upload-batch --account-name $AZ_BLOB_ACCOUNT --destination $AZ_BLOB_CONTAINER --source $PWD/shared/repository --pattern 'targets/simple/*'
+
+after_script:
+  # Log out of Azure.
+  - az logout
+  # Log out for Docker.
+  - docker logout $IMAGE_REGISTRY

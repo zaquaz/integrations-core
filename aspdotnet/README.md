@@ -20,7 +20,3 @@ See the [sample aspdotnet.d/conf.yaml](https://github.com/DataDog/integrations-c
 ## Validation
 
 [Run the Agent's `status` subcommand](https://docs.datadoghq.com/agent/faq/agent-commands/#agent-status-and-information) and look for `aspdotnet` under the Checks section.
-
-## Compatibility
-
-The aspdotnet check is compatible with all major platforms

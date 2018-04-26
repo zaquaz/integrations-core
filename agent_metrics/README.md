@@ -14,7 +14,9 @@ The Agent Metrics check is packaged with the Agent, so simply [install the Agent
 
 ### Configuration
 
-Edit the `agent_metrics.yaml` file to point to your server and port, set the masters to monitor. See the [sample agent_metrics.yaml](https://github.com/DataDog/integrations-core/blob/master/agent_metrics/conf.yaml.default) for all available configuration options.
+Edit the `agent_metrics.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your Agent metrics.  
+
+See the [sample agent_metrics.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/agent_metrics/conf.yaml.default) for all available configuration options.
 
 ### Validation
 

@@ -47,7 +47,7 @@ See the [sample redisdb.yaml](https://github.com/DataDog/integrations-core/blob/
 
 **Available for Agent >6.0**
 
-* Collecting logs is disabled by default in the Datadog Agent, you need to enable it in `datadog.yaml`:
+* Collecting logs is disabled by default in the Datadog Agent, enable it in your `datadog.yaml`file:
 
   ```
   logs_enabled: true

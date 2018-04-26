@@ -14,7 +14,7 @@ The Btrfs check is packaged with the Agent, so simply [install the Agent](https:
 
 ### Configuration
 
-1. Configure the Agent according to your needs, edit `conf.d/btrfs.yaml`. See the [sample btrfs.yaml](https://github.com/DataDog/integrations-core/blob/master/btrfs/conf.yaml.example) for all available configuration options.
+1. Edit the `btrfs.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your btrfs metrics. See the [sample btrfs.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/btrfs/conf.yaml.example) for all available configuration options.
 2. [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent)
 
 ### Validation

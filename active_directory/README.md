@@ -9,11 +9,13 @@ Get metrics from Microsoft Active Directory
 ## Setup
 ### Installation
 
-Install the `dd-check-active_directory` package manually or with your favorite configuration manager
+The Agent's Active directory check is packaged with the Agent, so simply [install the Agent](https://app.datadoghq.com/account/settings#agent) on your server.
 
 ### Configuration
 
-Edit the `active_directory.yaml` file to collect Active Directory performance data. See the [sample active_directory.yaml](https://github.com/DataDog/integrations-core/blob/master/active_directory/conf.yaml.example) for all available configuration options.
+Edit the `active_directory.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your Active Directory performance data.  
+
+See the [sample active_directory.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/active_directory/conf.yaml.example) for all available configuration options.
 
 ### Validation
 

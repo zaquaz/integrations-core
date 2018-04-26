@@ -1,4 +1,4 @@
-# Activemq Integration
+# ActiveMQ Integration
 
 ## Overview
 
@@ -14,7 +14,7 @@ The check collects metrics via JMX, so you'll need a JVM on each node so the Age
 ### Configuration
 
 1. **Make sure that [JMX Remote is enabled](http://activemq.apache.org/jmx.html) on your ActiveMQ server.**
-2. Configure the agent to connect to ActiveMQ. Edit `${confd_help('`conf.d/activemq.yaml`')}`. See the [sample activemq.yaml](https://github.com/DataDog/integrations-core/blob/master/activemq/conf.yaml.example) for all available configuration options.
+2. Configure the agent to connect to ActiveMQ. Edit the `activemq.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your ActiveMQ metrics. See the [sample activemq.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/activemq/conf.yaml.example) for all available configuration options.
 
 ```
 instances:

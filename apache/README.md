@@ -7,7 +7,7 @@ The Apache check tracks requests per second, bytes served, number of worker thre
 ## Setup
 ### Installation
 
-The Apache check is packaged with the Agent. To start gathering your Apache metrics and logs, you need to:
+The Apache check is packaged with the Agent. To start collecting your Apache metrics and logs, you need to:
 
 1. [Install the Agent](https://app.datadoghq.com/account/settings#agent) on your Apache servers.
   
@@ -15,12 +15,9 @@ The Apache check is packaged with the Agent. To start gathering your Apache metr
 2. Install `mod_status` on your Apache servers and enable `ExtendedStatus`.
 
 ### Configuration
-
-Create a file `apache.yaml` in the Agent's `conf.d` directory.
-
 #### Metric Collection
 
-*  Add this configuration setup to your `apache.yaml` file to start gathering your [Apache Metrics](#metrics):
+*  Add this configuration setup to your `apache.d/conf.yaml` file in the `conf.d/` folder at the root of your Agent's directory, to start collecting your [Apache Metrics](#metrics):
 
   ```
   init_config:
@@ -32,7 +29,7 @@ Create a file `apache.yaml` in the Agent's `conf.d` directory.
   #   disable_ssl_validation: true # if you need to disable SSL cert validation, i.e. for self-signed certs
   ```
   Change the `apache_status_url` parameter value and configure it for your environment.
-  See the [sample apache.yaml](https://github.com/DataDog/integrations-core/blob/master/apache/conf.yaml.example) for all available configuration options.
+  See the [sample apache.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/apache/conf.yaml.example) for all available configuration options.
 
 *  [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent).
 
@@ -40,13 +37,13 @@ Create a file `apache.yaml` in the Agent's `conf.d` directory.
 
 **Available for Agent >6.0**
 
-* Collecting logs is disabled by default in the Datadog Agent, you need to enable it in `datadog.yaml`:
+* Collecting logs is disabled by default in the Datadog Agent, enable it in your `datadog.yaml`file:
 
   ```
   logs_enabled: true
   ```
 
-* Add this configuration setup to your `apache.yaml` file to start collecting your Apache Logs:
+* Add this configuration setup to your `apache.d/conf.yaml` file to start collecting your Apache Logs:
 
   ```
     logs:
@@ -64,7 +61,7 @@ Create a file `apache.yaml` in the Agent's `conf.d` directory.
   ```
 
   Change the `path` and `service` parameter values and configure them for your environment.
-  See the [sample apache.yaml](https://github.com/DataDog/integrations-core/blob/master/apache/conf.yaml.example) for all available configuration options.
+  See the [sample apache.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/apache/conf.yaml.example) for all available configuration options.
 
 * [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent).
 

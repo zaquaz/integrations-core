@@ -33,8 +33,9 @@ echo -e "\033[0;32mMySQL grant - OK\033[0m" || \
 echo -e "\033[0;31mMissing SELECT grant\033[0m"
 ```
 
-Configure the Agent to connect to MySQL
-Edit conf.d/`cacti.yaml`. See the [sample cacti.yaml](https://github.com/DataDog/integrations-core/blob/master/cacti/conf.yaml.example) for all available configuration options:
+#### Configure the Agent to connect to MySQL
+
+Edit the `cacti.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory. See the[sample cacti.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/cacti/conf.yaml.example) for all available configuration options:
 
 ```
 init_config:

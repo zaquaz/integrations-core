@@ -14,7 +14,9 @@ The Activemq XML check is packaged with the Agent, so simply [install the Agent]
 
 ### Configuration
 
-Edit the `activemq_xml.yaml` file to point to your server and port, set the masters to monitor. See the [sample activemq_xml.yaml](https://github.com/DataDog/integrations-core/blob/master/activemq_xml/conf.yaml.example) for all available configuration options.
+Edit the `activemq_xml.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your Agent metrics.  
+
+See the [sample activemq_xml.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/activemq_xml/conf.yaml.example) for all available configuration options.
 
 ### Validation
 

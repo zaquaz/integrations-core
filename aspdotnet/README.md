@@ -13,7 +13,9 @@ The ASP.NET check is packaged with the Agent, so simply [install the Agent](http
 
 ## Configuration
 
-Edit the `aspdotnet.yaml` file to point to your server and port, set the masters to monitor
+Edit the `aspdotnet.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your ASP.NET metrics.  
+
+See the [sample aspdotnet.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/aspdotnet/conf.yaml.example) for all available configuration options.
 
 ## Validation
 

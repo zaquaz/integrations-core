@@ -71,7 +71,7 @@ DAEMON_OPTS="$DAEMON_OPTS -c -a -F '${LOG_FORMAT}'"
   Restart Varnishncsa to make sure the changes are taken into account.
 
 
-*  Collecting logs is disabled by default in the Datadog Agent, you need to enable it in `datadog.yaml`:
+*  Collecting logs is disabled by default in the Datadog Agent, enable it in your `datadog.yaml`file:
 
   ```
   logs_enabled: true

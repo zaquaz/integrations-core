@@ -84,7 +84,7 @@ PostgreSQL default logging is to stderr and logs do not include detailed informa
   #log_destination = ‘eventlog’
   ```
 
-* Collecting logs is disabled by default in the Datadog Agent, you need to enable it in datadog.yaml:
+* Collecting logs is disabled by default in the Datadog Agent, enable it in datadog.yaml:
 
   ```
   logs_enabled: true

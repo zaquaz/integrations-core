@@ -2,10 +2,10 @@
 {{< img src="integrations/cassandra/cassandra.png" alt="Cassandra default dashboard" responsive="true" popup="true">}}
 ## Overview
 
-Get metrics from cassandra service in real time to:
+Get metrics from Cassandra service in real time to:
 
-* Visualize and monitor cassandra states
-* Be notified about cassandra failovers and events.
+* Visualize and monitor Cassandra states
+* Be notified about Cassandra failovers and events.
 
 ## Setup
 ### Installation
@@ -18,12 +18,12 @@ This check has a limit of 350 metrics per instance. The number of returned metri
 
 ### Configuration
 
-Create a `cassandra.yaml` file in the Agent's `conf.d` directory.
+Edit the `cassandra.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your Cassandra metrics and logs. 
 
 #### Metric Collection
 
-*  The default configuration of your `cassandra.yaml` file activate the collection of your [Cassandra metrics](#metrics).
- See the [sample  cassandra.yaml](https://github.com/DataDog/integrations-core/blob/master/cassandra/conf.yaml.example) for all available configuration options.
+1. The default configuration of your `cassandra.d/conf.yaml` file activate the collection of your [Cassandra metrics](#metrics).  
+  See the [sample  cassandra.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/cassandra/conf.yaml.example) for all available configuration options.
  
 2. [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent).
 
@@ -49,7 +49,7 @@ Create a `cassandra.yaml` file in the Agent's `conf.d` directory.
   ```
 
   Change the `path` and `service` parameter values and configure them for your environment.
-See the [sample  cassandra.yaml](https://github.com/DataDog/integrations-core/blob/master/cassandra/conf.yaml.example) for all available configuration options.
+See the [sample cassandra.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/cassandra/conf.yaml.example) for all available configuration options.
    
 * [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent).
 

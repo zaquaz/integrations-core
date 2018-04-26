@@ -8,11 +8,13 @@ It uses the `nodetool` utility to collect them.
 ## Setup
 ### Installation
 
-The Cassandra nodetool check is packaged with the Agent, so simply [install the Agent](https://app.datadoghq.com/account/settings#agent) on your cassandra nodes.
+The Cassandra Nodetool check is packaged with the Agent, so simply [install the Agent](https://app.datadoghq.com/account/settings#agent) on your Cassandra nodes.
 
 ### Configuration
 
-Create a file `cassandra_nodetool.yaml` in the Agent's `conf.d` directory. See the [sample cassandra_nodetool.yaml](https://github.com/DataDog/integrations-core/blob/master/cassandra_nodetool/conf.yaml.example) for all available configuration options:
+Edit the `cassandra_nodetool.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your Cassandra Notetool metrics and logs.  
+
+See the [sample cassandra_nodetool.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/cassandra_nodetool/conf.yaml.example) for all available configuration options:
 
 ```
 init_config:

@@ -26,11 +26,13 @@ The Datadog Agent's Consul Check is included in the Agent package, so simply [in
 
 ### Configuration
 
-Create a `consul.yaml` in the Datadog Agent's `conf.d` directory.
+Edit the `consul.d/conf.yaml` file, in the `conf.d/` folder at the root of your Agent's directory, to start collecting your Consul metrics and logs.  
+
+See the [sample consul.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/consul/conf.yaml.example) for all available configuration options:
 
 #### Metric Collection
 
-*  Add this configuration setup to your `consul.yaml` file to start gathering your [Consul Metrics](#metrics):
+*  Add this configuration setup to your `consul.d/conf.yaml` file to start gathering your [Consul Metrics](#metrics):
 
 ```
 init_config:
@@ -51,7 +53,7 @@ instances:
       network_latency_checks: yes
 ```
 
-See the [sample consul.yaml](https://github.com/DataDog/integrations-core/blob/master/consul/conf.yaml.example) for all available configuration options.
+See the [sample consul.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/consul/conf.yaml.example) for all available configuration options.
 
 [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent) to start sending Consul metrics to Datadog.
 
@@ -91,7 +93,7 @@ Reload the Consul Agent to start sending more Consul metrics to DogStatsD.
           service: myservice
   ```
 Change the `path` and `service` parameter values and configure them for your environment.
-  See the [sample consul.yaml](https://github.com/DataDog/integrations-core/blob/master/consul/conf.yaml.example) for all available configuration options.
+  See the [sample consul.d/conf.yaml](https://github.com/DataDog/integrations-core/blob/master/consul/conf.yaml.example) for all available configuration options.
 
 * [Restart the Agent](https://docs.datadoghq.com/agent/faq/agent-commands/#start-stop-restart-the-agent).
 

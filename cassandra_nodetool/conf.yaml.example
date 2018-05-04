@@ -12,7 +12,7 @@ instances:
     # host: localhost
 
     # the port JMX is listening to for connections.
-    # port: 7199
+    # port: "7199"
 
     # a set of credentials to connect to the host. These are the credentials for the JMX server.
     # For the check to work, this user must have a read/write access so that nodetool can execute the `status` command

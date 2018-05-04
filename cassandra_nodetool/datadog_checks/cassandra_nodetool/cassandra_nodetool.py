@@ -44,7 +44,7 @@ class CassandraNodetoolCheck(AgentCheck):
         # Allow to specify a complete command for nodetool such as `docker exec container nodetool`
         nodetool_cmd = shlex.split(instance.get("nodetool", self.nodetool_cmd))
         host = instance.get("host", DEFAULT_HOST)
-        port = instance.get("port", DEFAULT_PORT)
+        port = str(instance.get("port", DEFAULT_PORT))
         keyspaces = instance.get("keyspaces", [])
         username = instance.get("username", "")
         password = instance.get("password", "")

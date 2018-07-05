@@ -17,10 +17,10 @@ import calendar
 from requests.exceptions import ConnectionError
 
 # project
-from checks import AgentCheck
-from config import _is_affirmative
-from utils.kubernetes import KubeUtil
-from utils.service_discovery.sd_backend import get_sd_backend
+from datadog_checks.checks import AgentCheck
+from datadog_checks.config import _is_affirmative
+from datadog_checks.utils.kubernetes import KubeUtil
+from datadog_checks.utils.service_discovery.sd_backend import get_sd_backend
 
 
 NAMESPACE = "kubernetes"

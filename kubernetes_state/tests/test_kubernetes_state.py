@@ -51,9 +51,9 @@ METRICS = [
     NAMESPACE + '.container.ready',
     NAMESPACE + '.container.running',
     NAMESPACE + '.container.terminated',
-    NAMESPACE + '.container.status_report.count.terminated',
     NAMESPACE + '.container.waiting',
     NAMESPACE + '.container.status_report.count.waiting',
+    NAMESPACE + '.container.status_report.count.terminated',
     NAMESPACE + '.container.restarts',
     NAMESPACE + '.container.cpu_requested',
     NAMESPACE + '.container.memory_requested',
@@ -92,7 +92,12 @@ TAGS = {
     NAMESPACE + '.container.status_report.count.waiting': [
         'reason:CrashLoopBackoff',
         'reason:ErrImagePull',
-        'reason:ImagePullBackoff'
+        'reason:ImagePullBackoff',
+        'pod:kube-dns-1326421443-hj4hx',
+        'pod:hello-1509998340-k4f8q'
+    ],
+    NAMESPACE + '.container.status_report.count.terminated': [
+        'pod:pod2',
     ]
 }
 

@@ -422,17 +422,23 @@ class SparkCheck(AgentCheck):
         '''
         spark_apps = {}
         for app_id, (app_name, tracking_url) in running_apps.iteritems():
-            response = self._rest_request_to_json(
-                tracking_url,
-                SPARK_APPS_PATH,
-                SPARK_SERVICE_CHECK, requests_config, tags)
+            # this is used for mesos as well, where there are a bunch of apps that aren't spark.
+            # So, when that happens the request should just ignore the errors
+            try:
+                response = self._rest_request_to_json(
+                    tracking_url,
+                    SPARK_APPS_PATH,
+                    SPARK_SERVICE_CHECK, requests_config, tags)
 
-            for app in response:
-                app_id = app.get('id')
-                app_name = app.get('name')
+                for app in response:
+                    app_id = app.get('id')
+                    app_name = app.get('name')
 
-                if app_id and app_name:
-                    spark_apps[app_id] = (app_name, tracking_url)
+                    if app_id and app_name:
+                        spark_apps[app_id] = (app_name, tracking_url)
+            except Exception as e:
+                self.log.debug("failed making the request: {}".format(e))
+                pass
 
         return spark_apps
 

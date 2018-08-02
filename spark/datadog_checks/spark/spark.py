@@ -8,6 +8,7 @@ import requests
 from requests.exceptions import Timeout, HTTPError, InvalidURL, ConnectionError
 from simplejson import JSONDecodeError
 from bs4 import BeautifulSoup
+# from urllib.error import HTTPError
 
 from datadog_checks.checks import AgentCheck
 from datadog_checks.config import is_affirmative
@@ -253,11 +254,11 @@ class SparkCheck(AgentCheck):
 
         elif cluster_mode == SPARK_MESOS_MODE:
             running_apps = self._mesos_init(instance, master_address, requests_config, tags)
-            return self._get_spark_app_ids(running_apps, requests_config, tags)
+            return self._get_spark_app_ids(running_apps, requests_config, tags, instance)
 
         elif cluster_mode == SPARK_YARN_MODE:
             running_apps = self._yarn_init(master_address, requests_config, tags)
-            return self._get_spark_app_ids(running_apps, requests_config, tags)
+            return self._get_spark_app_ids(running_apps, requests_config, tags, instance)
 
         else:
             raise Exception(
@@ -414,7 +415,7 @@ class SparkCheck(AgentCheck):
 
         return running_apps
 
-    def _get_spark_app_ids(self, running_apps, requests_config, tags):
+    def _get_spark_app_ids(self, running_apps, requests_config, tags, instance):
         '''
         Traverses the Spark application master in YARN to get a Spark application ID.
 
@@ -424,21 +425,49 @@ class SparkCheck(AgentCheck):
         for app_id, (app_name, tracking_url) in running_apps.iteritems():
             # this is used for mesos as well, where there are a bunch of apps that aren't spark.
             # So, when that happens the request should just ignore the errors
+            response = None
             try:
+                if instance.get('spark_rest_port'):
+                    ui_port = str(urlparse(tracking_url).port)
+                    rest_port = str(format(instance.get('spark_rest_port')))
+                    tracking_url = tracking_url.replace(ui_port, rest_port)
                 response = self._rest_request_to_json(
                     tracking_url,
                     SPARK_APPS_PATH,
                     SPARK_SERVICE_CHECK, requests_config, tags)
+                self.log.debug("response: {}".format(response))
+            except JSONDecodeError as e:
+                self.log.debug("failed decoding the request: {}".format(e))
+                try:
+                    ui_port = str(urlparse(tracking_url).port)
+                    tracking_url = tracking_url.replace(ui_port, '4040')
+                    response = self._rest_request_to_json(
+                        tracking_url,
+                        SPARK_APPS_PATH,
+                        SPARK_SERVICE_CHECK, requests_config, tags)
+                except (JSONDecodeError, HTTPError, ConnectionError) as e:
+                    pass
+            except (HTTPError, ConnectionError) as e:
+                self.log.debug("failed making the request: {}".format(e))
+                try:
+                    ui_port = str(urlparse(tracking_url).port)
+                    tracking_url = tracking_url.replace(ui_port, '4040')
+                    response = self._rest_request_to_json(
+                        tracking_url,
+                        SPARK_APPS_PATH,
+                        SPARK_SERVICE_CHECK, requests_config, tags)
+                except (JSONDecodeError, HTTPError, ConnectionError) as e:
+                    pass
 
+            if response and len(response) > 0:
                 for app in response:
                     app_id = app.get('id')
                     app_name = app.get('name')
 
                     if app_id and app_name:
                         spark_apps[app_id] = (app_name, tracking_url)
-            except Exception as e:
-                self.log.debug("failed making the request: {}".format(e))
-                pass
+
+        self.log.info('spark_apps: {}'.format(spark_apps))
 
         return spark_apps
 

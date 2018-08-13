@@ -49,7 +49,7 @@ IDX_METRICS = [
 def test_relations_metrics(aggregator, postgres_standalone, pg_instance):
     pg_instance['relations'] = ['persons']
 
-    posgres_check = PostgreSql('postgres', {}, {})
+    posgres_check = PostgreSql('postgres', {}, {}, [pg_instance])
     posgres_check.check(pg_instance)
 
     expected_tags = pg_instance['tags'] + ['db:%s' % pg_instance['dbname'], 'table:persons', 'schema:public']
@@ -70,7 +70,7 @@ def test_index_metrics(aggregator, postgres_standalone, pg_instance):
     pg_instance['relations'] = ['breed']
     pg_instance['dbname'] = 'dogs'
 
-    posgres_check = PostgreSql('postgres', {}, {})
+    posgres_check = PostgreSql('postgres', {}, {}, [pg_instance])
     posgres_check.check(pg_instance)
 
     expected_tags = ['db:dogs', 'table:breed', 'index:breed_names', 'schema:public']

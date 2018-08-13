@@ -45,6 +45,9 @@ instances:
 # after an agent restart, look for errors in the output of "agent status" command, as well as
 # /var/log/datadog/collector.log file.
 #
+# Please visit our help article for a guide on collecting custom metrics from PostgreSQL:
+# https://help.datadoghq.com/hc/en-us/articles/208385813-Postgres-custom-metric-collection-explained
+#
 #    /!\ DEPRECATION: Please use custom_queries instead of the now deprecated custom_metrics.
 #    custom_metrics:
 #    - # Londiste 3 replication lag
@@ -56,6 +59,7 @@ instances:
 #         pending_events: [postgresql.londiste_pending_events, GAUGE]
 #      query: SELECT consumer_name, %s from pgq.get_consumer_info() where consumer_name !~ 'watermark$';
 #      relation: false
+#
 #
 # Providing custom queries is also supported. Each query must have 3 fields:
 #

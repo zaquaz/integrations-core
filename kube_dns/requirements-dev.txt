@@ -1,1 +1,2 @@
-datadog-checks-dev
+mock==2.0.0
+pytest

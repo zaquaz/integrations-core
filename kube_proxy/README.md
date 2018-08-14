@@ -14,7 +14,7 @@ Either start the agent on the host network if the kube-proxy is also on the host
 
 Edit the `kube_proxy.d/conf.yaml` file to point to your server and port, set the masters to monitor
 
-Note: If you edit the namespace & metrics name, or add any other metric they are considered as custom
+⚠️ If you edit the namespace & metrics name, or add any other metric they are considered as custom
 
 Please contribute to the integration if you want to add a relevant metric.
 

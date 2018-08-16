@@ -328,7 +328,7 @@ SELECT s.schemaname,
         self.custom_metrics = {}
 
         # Deprecate custom_metrics in favor of custom_queries
-        if any(['custom_metrics' in instance for instance in instances]):
+        if instances is not None and any(['custom_metrics' in instance for instance in instances]):
             self.warning("DEPRECATION NOTICE: Please use the new custom_queries option "
                          "rather than the now deprecated custom_metrics")
 

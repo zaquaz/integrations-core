@@ -35,7 +35,7 @@ def test_custom_queries(aggregator, postgres_standalone, pg_instance):
             'query': "SELECT letter, num FROM (VALUES (21, 'a'), (22, 'b'), (23, 'c')) AS t (num,letter) LIMIT 1",
             'columns': [
                 {
-                    'name': 'customdb',
+                    'name': 'customtag',
                     'type': 'tag',
                 },
                 {
@@ -47,5 +47,5 @@ def test_custom_queries(aggregator, postgres_standalone, pg_instance):
     })
     postgres_check = PostgreSql('postgres', {}, {}, [pg_instance])
     postgres_check.check(pg_instance)
-    tags = ['customdb:a', 'db:{}'.format(pg_instance['dbname'])] + pg_instance['tags']
+    tags = ['customtag:a', 'db:{}'.format(pg_instance['dbname'])] + pg_instance['tags']
     aggregator.assert_metric('custom.num', value=21, tags=tags)

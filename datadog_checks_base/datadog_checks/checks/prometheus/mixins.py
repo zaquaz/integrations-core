@@ -131,6 +131,7 @@ class PrometheusScraperMixin(object):
         # Some metrics are retrieved from differents hosts and often
         # a label can hold this information, this transfers it to the hostname
         self.label_to_hostname = None
+        self.label_to_hostname_suffix = ""
 
         # Add a "health" service check for the prometheus endpoint
         self.health_service_check = False
@@ -590,7 +591,7 @@ class PrometheusScraperMixin(object):
         if hostname is None and self.label_to_hostname is not None:
             for label in metric.label:
                 if label.name == self.label_to_hostname:
-                    return label.value
+                    return (label.value + self.label_to_hostname_suffix)
 
         return hostname
 

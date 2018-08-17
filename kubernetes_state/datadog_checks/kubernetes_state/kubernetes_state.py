@@ -9,7 +9,12 @@ from collections import defaultdict, Counter
 from datadog_checks.errors import CheckException
 from datadog_checks.checks.prometheus import PrometheusCheck
 
-from datadog_agent import get_clustername
+try:
+    # this module is only available in agent 6
+    from datadog_agent import get_clustername
+except ImportError:
+    def get_clustername():
+        return ""
 
 
 METRIC_TYPES = ['counter', 'gauge']
